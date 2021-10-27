@@ -19,11 +19,10 @@ logger = logging.getLogger(__name__)
 # TODO: доработать модель.
 class PredictionModel:
     """
-    Модель для прдсказания содержания углерода и температуры чугуна во время процесса продувки металла.
+    Модель для предсказания содержания углерода и температуры чугуна во время процесса продувки металла.
     :param numerical_features: list, список численных признаков из датафрейма
     :param ohe_categorical_features: list, список категориальных признаков для one-hot-encoding
     :param ste_categorical_features: list, список категориальных признаков для smoothed target encoding.
-    :param lb_categorical_features: list, список категориальных признаков для label encoding.
     :param model_params: параметры модели.
     """
 

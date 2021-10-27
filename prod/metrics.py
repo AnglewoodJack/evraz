@@ -4,7 +4,7 @@ from typing import Dict
 from sklearn.metrics import mean_absolute_percentage_error, r2_score, mean_squared_error
 
 
-# TODO: доработать метрики для молучения оценок муьлтитаргета.
+# TODO: доработать метрики для получения оценок мультитаргета.
 def evraz_metric(answers: pd.DataFrame, user_csv: pd.DataFrame):
     """
     Метрика оценки качества модели, предложенная организаторами EVRAZ.
