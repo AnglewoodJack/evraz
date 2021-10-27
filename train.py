@@ -12,8 +12,8 @@ from prod.settings import (MODEL_PARAMS,
                            CATEGORICAL_STE_FEATURES,
                            TARGET)
 from prod.metrics import metrics_stat, evraz_metric
-from prod.traintest import traintest
-from prod.dummy_data_gen import generate_dummy_df
+from _testing.traintest import traintest
+from _testing.dummy_data_gen import generate_dummy_df
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
