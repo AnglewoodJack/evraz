@@ -8,7 +8,6 @@ from sklearn.base import BaseEstimator, TransformerMixin
 class SmoothedTargetEncoding(BaseEstimator, TransformerMixin):
     """
     Регуляризованный target encoding.
-    :param categorical_features: список из столбцов с категориальными признаками для энкодинга.
     :param alpha: параметр регуляризации.
     """
 
@@ -51,9 +50,9 @@ class SmoothedTargetEncoding(BaseEstimator, TransformerMixin):
             self.mean_by_cat[col] = (
                 x.groupby(col)[self.target].apply(lambda n: self.smoothed_target_encoding(n)).fillna(self.mean_)
             )
-        # Удалени целевой переменной из датафрейму.
+        # Удаление целевой переменной из датафрейму.
         x.drop(self.target, axis=1, inplace=True)
-        # Флаг успешного завершениия.
+        # Флаг успешного завершения.
         self.__is_fitted = True
         return self
 
@@ -65,7 +64,7 @@ class SmoothedTargetEncoding(BaseEstimator, TransformerMixin):
         """
         # Создание копии датафрейма.
         x_cp = x.copy()
-        # Кодирование прзнаков.
+        # Кодирование признаков.
         if self.__is_fitted:
             encoded_cols = []
             for col in self.categorical_features:
