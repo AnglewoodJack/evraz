@@ -25,7 +25,7 @@ def parse_args():
     parser.add_argument("--test_data", "-d", type=str, dest="d", required=True,
                         help="Путь до отложенной выборки")
     parser.add_argument("--model_path", "-mp", type=str, dest="mp", required=True,
-                        help="Пусть до сериализованной ML модели")
+                        help="Путь до сериализованной ML модели")
     parser.add_argument("--output", "-o", type=str, dest="o", required=True,
                         help="Путь до выходного файла")
     return parser.parse_args()

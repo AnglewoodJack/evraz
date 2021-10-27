@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 def parse_args():
     parser = argparse.ArgumentParser(
         description="""
-        Модель прдсказания содержания углерода и температуры чугуна 
+        Модель предсказания содержания углерода и температуры чугуна 
         во время процесса продувки металла для хакатона EVRAZ.
         Скрипт для обучения модели.
         Пример запуска:
@@ -42,8 +42,7 @@ if __name__ == "__main__":
     try:
         # Загрузка обучающего датасета.
         start = datetime.now()
-        generate_dummy_df(1000, 45, 1, 1)
-        logger.info('\n\nSTART train.py')
+        logger.info('START train.py')
         args = vars(parse_args())
         logger.info('Load train dataframe')
         train_df = pd.read_csv(args['d'])
@@ -55,8 +54,8 @@ if __name__ == "__main__":
         model = PredictionModel(numerical_features=NUM_FEATURES,
                                 ohe_categorical_features=CATEGORICAL_OHE_FEATURES,
                                 ste_categorical_features=CATEGORICAL_STE_FEATURES,
+                                targets=TARGET,
                                 model_params=MODEL_PARAMS)
-        logger.info('Fit model')
         model.fit(X_train, y_train)
         # Сохранение модели.
         logger.info('Save model')

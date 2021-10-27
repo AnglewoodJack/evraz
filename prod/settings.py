@@ -5,24 +5,21 @@
 #              'MN','S','P','CR','NI','CU','O2_pressure','T фурмы 2','T фурмы 1','AR','CO','CO2','H2','N2',
 #              'O2','T','V','NPLV','Time','DATA_ZAMERA','TI','V',]
 # Целевая переменная.
-TARGET = 'C'
+TARGET = ['C', 'TST']
 # Категориальные признаки, для которых применяется smoothed target encoding.
-CATEGORICAL_STE_FEATURES = []
+CATEGORICAL_STE_FEATURES = ['44', 'date']
 # Категориальные признаки, для которых применяется one-hot-encoding.
-CATEGORICAL_OHE_FEATURES = ['44']
+CATEGORICAL_OHE_FEATURES = []
 # Численные признаки.
 NUM_FEATURES = [str(num) for num in range(43)]
 # Параметры модели.
 MODEL_PARAMS = dict(
     n_estimators=1500,
+    loss_function='MultiRMSE',
     learning_rate=0.01,
-    reg_alpha=1,
-    num_leaves=40,
+    cat_features=CATEGORICAL_STE_FEATURES+CATEGORICAL_OHE_FEATURES,
     min_child_samples=5,
-    importance_type="gain",
-    n_jobs=6,
-    random_state=563,
-    categorical_feature= CATEGORICAL_OHE_FEATURES + CATEGORICAL_STE_FEATURES,
+    random_seed=42,
     verbose=0
         )
 # Параметры логирования.

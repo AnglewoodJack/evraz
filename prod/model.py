@@ -3,8 +3,8 @@ import logging
 import numpy as np
 import pandas as pd
 
-from lightgbm import LGBMRegressor
 from typing import List, Union, Dict
+from catboost import CatBoostRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
@@ -30,13 +30,15 @@ class PredictionModel:
                  numerical_features: List[str],
                  ohe_categorical_features: List[str],
                  ste_categorical_features: List[str],
-                 # lb_categorical_features: List[str],
+                 targets: List[str],
                  model_params: Dict[str, Union[str, int, float, list]]
                  ):
         self.num_features = numerical_features
         self.ohe_cat_features = ohe_categorical_features
         self.ste_cat_features = ste_categorical_features
+        self.targets = targets
         self._is_fitted = False
+        # TODO: Настроить пайплайн под соответствующую модель.
         # Трансформер вещественных признаков.
         self.numeric_transformer = Pipeline(
             steps=[
@@ -52,8 +54,10 @@ class PredictionModel:
         self.ste_transformer = Pipeline(
             steps=[
                 ('ste_imputer', SimpleImputer(strategy='constant')), # заполнение пропусков.
-                ('ste_encoder', OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)), # энкодинг.
-                # ('ste_encoder', SmoothedTargetEncoding(alpha=50)) # энкодинг.
+                # ('ste_encoder', OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)), # энкодинг.
+                ('ste_encoder', SmoothedTargetEncoding(targets=self.targets,
+                                                       categorical_features=self.ste_cat_features,
+                                                       alpha=50)) # энкодинг.
             ])
 
         self.preprocessor = ColumnTransformer(
@@ -63,7 +67,8 @@ class PredictionModel:
                 ('ste', self.ste_transformer, self.ste_cat_features)
             ])
         # Модель.
-        self.model = LGBMRegressor(**model_params)
+        # TODO: Подставить модель, выбранную на этапе исследования.
+        self.model = CatBoostRegressor(**model_params)
         # Пайплайн.
         self.pipeline = Pipeline(
             steps=[
@@ -78,8 +83,7 @@ class PredictionModel:
         :param y: pd.Series или pd.DataFrame, массив или датафрейм с целевыми переменными.
         """
         logger.info('Fit model ' + self.model.__module__)
-        # TODO: Проверка работоспособности пайплайна в целом и SmoothedTargetEncoding в частности.
-        # model__feature_name=[f'{i}' for i in range(70)],model__categorical_feature=['67','68','69']
+        # TODO: Добавить определение категориальных признаков.
         self.pipeline.fit(x, y)
         logger.info('Model fit completed successfully.')
         self.__is_fitted = True
@@ -111,7 +115,7 @@ class PredictionModel:
         """
         Загрузка модели из pickle.
         :param path: str, путь к файлу.
-        :return: Модель
+        :return: Модель.
         """
         with open(path, "rb") as f:
             model = pickle.load(f)

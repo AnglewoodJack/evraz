@@ -2,3 +2,5 @@
 /venv/
 /.idea/
 /model_selection/.ipynb_checkpoints/
+/catboost_info/
+train.log
