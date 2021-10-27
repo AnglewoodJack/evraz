@@ -1,4 +1,3 @@
-import pickle
 import argparse
 import pandas as pd
 import logging.config
@@ -12,7 +11,8 @@ from prod.settings import (MODEL_PARAMS,
                            CATEGORICAL_OHE_FEATURES,
                            CATEGORICAL_STE_FEATURES,
                            TARGET)
-from prod.metrics import metrics_stat
+from prod.metrics import metrics_stat, evraz_metric
+from prod.traintest import traintest
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     try:
         # Загрузка обучающего датасета.
         start = datetime.now()
-        logger.info('START train.py')
+        logger.info('\n\nSTART train.py')
         args = vars(parse_args())
         logger.info('Load train dataframe')
         train_df = pd.read_csv(args['d'])
@@ -50,12 +50,6 @@ if __name__ == "__main__":
         X_train = train_df[NUM_FEATURES + CATEGORICAL_STE_FEATURES + CATEGORICAL_OHE_FEATURES]
         y_train = train_df[TARGET]
         logger.info(f'X_train shape: {X_train.shape}, y_train shape: {y_train.shape}')
-        # Созранение в pickle.
-        with open('X_train.pkl', "wb") as data_X:
-            pickle.dump(X_train, data_X)
-        with open('y_train.pkl', "wb") as data_y:
-            pickle.dump(y_train, data_y)
-        # Обучение модели.
         model = PredictionModel(numerical_features=NUM_FEATURES,
                                 ohe_categorical_features=CATEGORICAL_OHE_FEATURES,
                                 ste_categorical_features=CATEGORICAL_STE_FEATURES,
@@ -70,7 +64,9 @@ if __name__ == "__main__":
         # TODO: использовать нужную метрику.
         metrics = metrics_stat(y_train.values, predictions)
         logger.info(f'Metrics stat for training data with offers prices: {metrics}')
-        print(datetime.now() - start)
+        answers, user_csv = traintest(train_df)
+        logger.info(f'evraz_metric using catboost: {evraz_metric(answers, user_csv)}')
+        logger.info(f'Finished in {datetime.now() - start} s')
 
     except Exception as e:
         err = format_exc()
