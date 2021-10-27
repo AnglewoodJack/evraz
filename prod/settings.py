@@ -9,9 +9,9 @@ TARGET = 'C'
 # Категориальные признаки, для которых применяется smoothed target encoding.
 CATEGORICAL_STE_FEATURES = []
 # Категориальные признаки, для которых применяется one-hot-encoding.
-CATEGORICAL_OHE_FEATURES = []
+CATEGORICAL_OHE_FEATURES = ['44']
 # Численные признаки.
-NUM_FEATURES = [str(num) for num in range(44)]
+NUM_FEATURES = [str(num) for num in range(43)]
 # Параметры модели.
 MODEL_PARAMS = dict(
     n_estimators=1500,

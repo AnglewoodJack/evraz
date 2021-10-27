@@ -13,6 +13,7 @@ from prod.settings import (MODEL_PARAMS,
                            TARGET)
 from prod.metrics import metrics_stat, evraz_metric
 from prod.traintest import traintest
+from prod.dummy_data_gen import generate_dummy_df
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
@@ -41,6 +42,7 @@ if __name__ == "__main__":
     try:
         # Загрузка обучающего датасета.
         start = datetime.now()
+        generate_dummy_df(1000, 45, 1, 1)
         logger.info('\n\nSTART train.py')
         args = vars(parse_args())
         logger.info('Load train dataframe')
@@ -64,8 +66,9 @@ if __name__ == "__main__":
         # TODO: использовать нужную метрику.
         metrics = metrics_stat(y_train.values, predictions)
         logger.info(f'Metrics stat for training data with offers prices: {metrics}')
+        logger.info(f'Running catboost for comparing with evraz metrics...')
         answers, user_csv = traintest(train_df)
-        logger.info(f'evraz_metric using catboost: {evraz_metric(answers, user_csv)}')
+        logger.info(f'Evraz metric using catboost: {evraz_metric(answers, user_csv)}')
         logger.info(f'Finished in {datetime.now() - start} s')
 
     except Exception as e:
