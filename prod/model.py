@@ -25,6 +25,7 @@ class PredictionModel:
     :param ste_categorical_features: list, список категориальных признаков для smoothed target encoding.
     :param model_params: параметры модели.
     """
+    __is_fitted: bool
 
     def __init__(self,
                  numerical_features: List[str],
@@ -32,6 +33,7 @@ class PredictionModel:
                  ste_categorical_features: List[str],
                  targets: List[str],
                  model_params: Dict[str, Union[str, int, float, list]]
+                 
                  ):
         self.num_features = numerical_features
         self.ohe_cat_features = ohe_categorical_features
@@ -42,22 +44,22 @@ class PredictionModel:
         # Трансформер вещественных признаков.
         self.numeric_transformer = Pipeline(
             steps=[
-            ('num_imputer', SimpleImputer(strategy='median')), # заполнение пропусков.
-            ('num_scaler', StandardScaler()) # нормализация.
+                ('num_imputer', SimpleImputer(strategy='median')),  # заполнение пропусков.
+                ('num_scaler', StandardScaler())  # нормализация.
             ])
         # Трансформеры категориальных признаков.
         self.ohe_transformer = Pipeline(
             steps=[
-                ('ohe_imputer', SimpleImputer(strategy='constant')), # заполнение пропусков.
+                ('ohe_imputer', SimpleImputer(strategy='constant')),  # заполнение пропусков.
                 ('ohe_encoder', OneHotEncoder())
             ])
         self.ste_transformer = Pipeline(
             steps=[
-                ('ste_imputer', SimpleImputer(strategy='constant')), # заполнение пропусков.
+                ('ste_imputer', SimpleImputer(strategy='constant')),  # заполнение пропусков.
                 # ('ste_encoder', OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)), # энкодинг.
                 ('ste_encoder', SmoothedTargetEncoding(targets=self.targets,
                                                        categorical_features=self.ste_cat_features,
-                                                       alpha=50)) # энкодинг.
+                                                       alpha=50))  # энкодинг.
             ])
 
         self.preprocessor = ColumnTransformer(
@@ -84,7 +86,11 @@ class PredictionModel:
         """
         logger.info('Fit model ' + self.model.__module__)
         # TODO: Добавить определение категориальных признаков.
+
         self.pipeline.fit(x, y)
+
+        print(self.pipeline.named_steps['preprocessor'].transformers_[1][1].named_steps['ohe_encoder'].get_feature_names_out())
+
         logger.info('Model fit completed successfully.')
         self.__is_fitted = True
 
