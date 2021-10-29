@@ -11,9 +11,9 @@ from prod.settings import (MODEL_PARAMS,
                            CATEGORICAL_OHE_FEATURES,
                            CATEGORICAL_STE_FEATURES,
                            TARGET)
+from prod.feature_generators import preprocess_mapper
 from prod.metrics import metrics_stat, evraz_metric
-from _testing.traintest import traintest
-from _testing.dummy_data_gen import generate_dummy_df
+
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
@@ -52,11 +52,7 @@ if __name__ == "__main__":
         X_train = train_df[NUM_FEATURES + CATEGORICAL_STE_FEATURES + CATEGORICAL_OHE_FEATURES]
         y_train = train_df[TARGET]
         logger.info(f'X_train shape: {X_train.shape}, y_train shape: {y_train.shape}')
-        model = PredictionModel(numerical_features=NUM_FEATURES,
-                                ohe_categorical_features=CATEGORICAL_OHE_FEATURES,
-                                ste_categorical_features=CATEGORICAL_STE_FEATURES,
-                                targets=TARGET,
-                                model_params=MODEL_PARAMS)
+        model = PredictionModel(mapper=preprocess_mapper, model_params=MODEL_PARAMS)
         model.fit(X_train, y_train)
         # Сохранение модели.
         logger.info('Save model')
@@ -66,9 +62,9 @@ if __name__ == "__main__":
         # TODO: использовать нужную метрику.
         metrics = metrics_stat(y_train.values, predictions)
         logger.info(f'Metrics stat for training data with offers prices: {metrics}')
+
         logger.info(f'Running catboost for comparing with evraz metrics...')
-        answers, user_csv = traintest(train_df)
-        logger.info(f'Evraz metric using catboost: {evraz_metric(answers, user_csv)}')
+        # logger.info(f'Evraz metric using catboost: {evraz_metric(answers, user_csv)}')
         logger.info(f'Finished in {datetime.now() - start} s')
 
     except Exception as e:

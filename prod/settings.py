@@ -7,9 +7,9 @@
 # Целевая переменная.
 TARGET = ['C', 'TST']
 # Категориальные признаки, для которых применяется smoothed target encoding.
-CATEGORICAL_STE_FEATURES = ['44', 'date']
+CATEGORICAL_STE_FEATURES = ['44']
 # Категориальные признаки, для которых применяется one-hot-encoding.
-CATEGORICAL_OHE_FEATURES = ['44', 'date']
+CATEGORICAL_OHE_FEATURES = []
 # Численные признаки.
 NUM_FEATURES = [str(num) for num in range(43)]
 # Суффикс для обозначения категориальных переменных.
@@ -19,7 +19,6 @@ MODEL_PARAMS = dict(
     n_estimators=1500,
     loss_function='MultiRMSE',
     learning_rate=0.01,
-    # cat_features=CATEGORICAL_STE_FEATURES+CATEGORICAL_OHE_FEATURES,
     min_child_samples=5,
     random_seed=42,
     verbose=0

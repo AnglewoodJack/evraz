@@ -3,15 +3,11 @@ import logging
 import numpy as np
 import pandas as pd
 
-from typing import List, Union, Dict
-from catboost import CatBoostRegressor
+from typing import Union, Dict
 from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
-from sklearn.compose import ColumnTransformer
 from sklearn.exceptions import NotFittedError
-from sklearn.preprocessing import OneHotEncoder, StandardScaler, OrdinalEncoder
 
-from .data_transformers import SmoothedTargetEncoding
+from prod.custom_regressors import CustomFeatureSelection, CustomCatBoostRegressor
 
 logger = logging.getLogger(__name__)
 
@@ -27,56 +23,13 @@ class PredictionModel:
     """
     __is_fitted: bool
 
-    def __init__(self,
-                 numerical_features: List[str],
-                 ohe_categorical_features: List[str],
-                 ste_categorical_features: List[str],
-                 targets: List[str],
-                 model_params: Dict[str, Union[str, int, float, list]]
-                 
-                 ):
-        self.num_features = numerical_features
-        self.ohe_cat_features = ohe_categorical_features
-        self.ste_cat_features = ste_categorical_features
-        self.targets = targets
+    def __init__(self, mapper: object, model_params: Dict[str, Union[str, int, float, list]]):
         self._is_fitted = False
-        # TODO: Настроить пайплайн под соответствующую модель.
-        # Трансформер вещественных признаков.
-        self.numeric_transformer = Pipeline(
-            steps=[
-                ('num_imputer', SimpleImputer(strategy='median')),  # заполнение пропусков.
-                ('num_scaler', StandardScaler())  # нормализация.
-            ])
-        # Трансформеры категориальных признаков.
-        self.ohe_transformer = Pipeline(
-            steps=[
-                ('ohe_imputer', SimpleImputer(strategy='constant')),  # заполнение пропусков.
-                ('ohe_encoder', OneHotEncoder())
-            ])
-        self.ste_transformer = Pipeline(
-            steps=[
-                ('ste_imputer', SimpleImputer(strategy='constant')),  # заполнение пропусков.
-                # ('ste_encoder', OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)), # энкодинг.
-                ('ste_encoder', SmoothedTargetEncoding(targets=self.targets,
-                                                       categorical_features=self.ste_cat_features,
-                                                       alpha=50))  # энкодинг.
-            ])
-
-        self.preprocessor = ColumnTransformer(
-            transformers=[
-                ('num', self.numeric_transformer, self.num_features),
-                ('ohe', self.ohe_transformer, self.ohe_cat_features),
-                ('ste', self.ste_transformer, self.ste_cat_features)
-            ])
-        # Модель.
-        # TODO: Подставить модель, выбранную на этапе исследования.
-        self.model = CatBoostRegressor(**model_params)
-        # Пайплайн.
-        self.pipeline = Pipeline(
-            steps=[
-                ('preprocessor', self.preprocessor),
-                ('model', self.model)
-            ])
+        self.pipeline = Pipeline(steps=[
+            ("preprocess", mapper),
+            ("feature_selection", CustomFeatureSelection(CustomCatBoostRegressor(**model_params))),
+            ("estimator", CustomCatBoostRegressor(**model_params))
+             ])
 
     def fit(self, x: pd.DataFrame, y: Union[pd.Series, pd.DataFrame]):
         """
@@ -84,13 +37,8 @@ class PredictionModel:
         :param x: pd.DataFrame, датфрейм с признаками.
         :param y: pd.Series или pd.DataFrame, массив или датафрейм с целевыми переменными.
         """
-        logger.info('Fit model ' + self.model.__module__)
-        # TODO: Добавить определение категориальных признаков.
-
+        logger.info('Fit model ' + self.pipeline['estimator'].__module__)
         self.pipeline.fit(x, y)
-
-        print(self.pipeline.named_steps['preprocessor'].transformers_[1][1].named_steps['ohe_encoder'].get_feature_names_out())
-
         logger.info('Model fit completed successfully.')
         self.__is_fitted = True
 
