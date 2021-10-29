@@ -10,8 +10,9 @@ from prod.settings import (MODEL_PARAMS,
                            NUM_FEATURES,
                            CATEGORICAL_OHE_FEATURES,
                            CATEGORICAL_STE_FEATURES,
-                           TARGET)
-from prod.feature_generators import preprocess_mapper
+                           TARGET,
+                           CAT_PREFIX)
+from prod.pipeline import pipeline_mapper
 from prod.metrics import metrics_stat, evraz_metric
 
 
@@ -52,8 +53,17 @@ if __name__ == "__main__":
         X_train = train_df[NUM_FEATURES + CATEGORICAL_STE_FEATURES + CATEGORICAL_OHE_FEATURES]
         y_train = train_df[TARGET]
         logger.info(f'X_train shape: {X_train.shape}, y_train shape: {y_train.shape}')
-        model = PredictionModel(mapper=preprocess_mapper, model_params=MODEL_PARAMS)
+        # Создание пайплайна.
+        pipeline = pipeline_mapper(numerical=NUM_FEATURES,
+                                   ohe_categorical=CATEGORICAL_OHE_FEATURES,
+                                   ste_categorical=CATEGORICAL_STE_FEATURES,
+                                   targets=TARGET,
+                                   prefix=CAT_PREFIX)
+        logger.info('Pipeline created')
+        # Обучение модели.
+        model = PredictionModel(mapper=pipeline, model_params=MODEL_PARAMS)
         model.fit(X_train, y_train)
+        logger.info('Model fitting completed')
         # Сохранение модели.
         logger.info('Save model')
         model.save(args['mp'])
@@ -61,10 +71,9 @@ if __name__ == "__main__":
         predictions = model.predict(X_train)
         # TODO: использовать нужную метрику.
         metrics = metrics_stat(y_train.values, predictions)
-        logger.info(f'Metrics stat for training data with offers prices: {metrics}')
-
-        logger.info(f'Running catboost for comparing with evraz metrics...')
-        # logger.info(f'Evraz metric using catboost: {evraz_metric(answers, user_csv)}')
+        logger.info(f'General metrics stat: {metrics}')
+        evraz = evraz_metric(y_train, predictions)
+        logger.info(f'Evraz metrics: {evraz}')
         logger.info(f'Finished in {datetime.now() - start} s')
 
     except Exception as e:

@@ -1,9 +1,7 @@
 import argparse
 import pandas as pd
 import logging.config
-
 from traceback import format_exc
-
 from prod.model import PredictionModel
 from prod.settings import LOGGING_CONFIG, NUM_FEATURES, CATEGORICAL_OHE_FEATURES, CATEGORICAL_STE_FEATURES, TARGET
 
@@ -14,7 +12,7 @@ logger = logging.getLogger(__name__)
 def parse_args():
     parser = argparse.ArgumentParser(
         description="""
-        Модель прдсказания содержания углерода и температуры чугуна 
+        Модель предсказания содержания углерода и температуры чугуна 
         во время процесса продувки металла для хакатона EVRAZ.
         Скрипт для предсказания модели.
         Пример запуска:

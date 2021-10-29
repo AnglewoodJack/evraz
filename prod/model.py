@@ -2,17 +2,14 @@ import pickle
 import logging
 import numpy as np
 import pandas as pd
-
 from typing import Union, Dict
 from sklearn.pipeline import Pipeline
 from sklearn.exceptions import NotFittedError
-
-from prod.custom_regressors import CustomFeatureSelection, CustomCatBoostRegressor
+from prod.custom_regressor import CustomCatBoostRegressor, CustomFeatureSelection
 
 logger = logging.getLogger(__name__)
 
 
-# TODO: доработать модель.
 class PredictionModel:
     """
     Модель для предсказания содержания углерода и температуры чугуна во время процесса продувки металла.

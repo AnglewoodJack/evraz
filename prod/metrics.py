@@ -4,27 +4,31 @@ from typing import Dict
 from sklearn.metrics import mean_absolute_percentage_error, r2_score, mean_squared_error
 
 
-# TODO: доработать метрики для получения оценок мультитаргета.
-def evraz_metric(answers: pd.DataFrame, user_csv: pd.DataFrame):
+def evraz_metric(y_true: pd.DataFrame, y_pred: np.array):
     """
     Метрика оценки качества модели, предложенная организаторами EVRAZ.
     :param answers: pd.DataFrame, датасет с реальными значениями целевых переменных.
     :param user_csv: pd.DataFrame, датасет с предсказанными значениями целевых переменных.
     :return:
     """
+    predictions = pd.DataFrame(data=y_pred, columns=['C', 'TST'])
     # Содержание углерода в металле.
-    delta_c = np.abs(np.array(answers['C']) - np.array(user_csv['C']))
+    delta_c = np.abs(np.array(y_true['C']) - np.array(predictions['C']))
     hit_rate_c = np.int64(delta_c < 0.02)
     # Температура металла.
-    delta_t = np.abs(np.array(answers['TST']) - np.array(user_csv['TST']))
+    delta_t = np.abs(np.array(y_true['TST']) - np.array(predictions['TST']))
     hit_rate_t = np.int64(delta_t < 20)
-
-    N = np.size(answers['C'])
-
+    N = np.size(y_true['C'])
     return np.sum(hit_rate_c + hit_rate_t) / 2 / N
 
 
 def median_absolute_percentage_error(y_true: np.array, y_pred: np.array) -> float:
+    """
+    MAPE метрика.
+    :param y_true: np.array, реальные значения целевой переменной.
+    :param y_pred: np.array, предсказанные значения целевой переменной.
+    :return: score модели.
+    """
     return np.median(np.abs(y_pred-y_true)/y_true)
 
 
