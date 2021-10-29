@@ -11,11 +11,11 @@ def pipeline_mapper(numerical: List[str], ohe_categorical: List[str],
     """
     Создает пайплайн для обработки данных. Эстиматор сюда не включается.
     :param prefix: префикс для новых названий обработанных с помощью энкодеров категориальных признаков.
-    :param targets:
-    :param numerical:
-    :param ohe_categorical:
-    :param ste_categorical:
-    :return:
+    :param targets: список целевых переменных.
+    :param numerical: список вещественных признаков.
+    :param ohe_categorical: список категориальных признаков для one-hot-encoding.
+    :param ste_categorical: список категориальных признаков для ste.
+    :return: DataFrameMapper, скомпилированный пайплайн.
     """
 #    Подготовка списка признаков для передачи в mapper.
     numeric_features = [[x] for x in numerical]
