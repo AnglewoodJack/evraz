@@ -10,4 +10,6 @@ COPY prod /usr/src/app/prod/
 COPY train.py /usr/src/app/
 COPY predict.py /usr/src/app/
 
-CMD [ "python3", "train.py", "-d", "dummy.csv", "-mp", "model" ]
+RUN python3 train.py -d dummy.csv -mp model
+
+CMD [ "python3", "train.py", "-d", "dummy.csv", "-mp", "model", "-o", "res.csv" ]
