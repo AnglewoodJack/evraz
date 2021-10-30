@@ -45,7 +45,7 @@ if __name__ == "__main__":
         # Сохранение результатов.
         logger.info('Save results')
         target_df = pd.DataFrame(data=target, columns=TARGET)
-        pd.concat([test_df, target_df], axis=1).to_csv(args['o'], index=False)
+        pd.concat([test_df['NPLV'], target_df], axis=1).to_csv(args['o'], index=False)
 
     except Exception as e:
         err = format_exc()

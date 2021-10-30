@@ -69,11 +69,8 @@ if __name__ == "__main__":
         model.save(args['mp'])
         # Предсказание.
         predictions = model.predict(X_train)
-        # TODO: использовать нужную метрику.
         metrics = metrics_stat(y_train.values, predictions)
         logger.info(f'General metrics stat: {metrics}')
-        evraz = evraz_metric(y_train, predictions)
-        logger.info(f'Evraz metrics: {evraz}')
         logger.info(f'Finished in {datetime.now() - start} s')
 
     except Exception as e:

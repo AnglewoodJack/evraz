@@ -1,17 +1,11 @@
-# TODO: добавить списки признаков и параметры модели
-# cols_names = ['SEC','RAS','POL','VDL','NML','VES','plavka_VR_NACH', 'plavka_VR_KON','plavka_NMZ','plavka_NAPR_ZAD',
-#              'plavka_STFUT','plavka_TIPE_FUR','plavka_ST_FURM','plavka_TIPE_GOL','plavka_ST_GOL',
-#              'VDSYP','NMSYP','VSSYP','DAT_OTD','TYPE_OPER','NOP','VR_NACH','VR_KON','O2','VES','T','SI',
-#              'MN','S','P','CR','NI','CU','O2_pressure','T фурмы 2','T фурмы 1','AR','CO','CO2','H2','N2',
-#              'O2','T','V','NPLV','Time','DATA_ZAMERA','TI','V',]
-# Целевая переменная.
-TARGET = ['C', 'TST']
+# Целевые переменные
+TARGET = ['TST', 'C']
 # Категориальные признаки, для которых применяется smoothed target encoding.
-CATEGORICAL_STE_FEATURES = ['44']
+CATEGORICAL_STE_FEATURES = ['plavka_ST_FURM']
 # Категориальные признаки, для которых применяется one-hot-encoding.
 CATEGORICAL_OHE_FEATURES = []
 # Численные признаки.
-NUM_FEATURES = [str(num) for num in range(43)]
+NUM_FEATURES = ['O2', 'N2','T', 'H2', 'CO2', 'CO', 'AR']
 # Суффикс для обозначения категориальных переменных.
 CAT_PREFIX = "#CAT#_"
 # Параметры модели.
