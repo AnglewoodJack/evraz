@@ -71,6 +71,8 @@ if __name__ == "__main__":
         predictions = model.predict(X_train)
         metrics = metrics_stat(y_train.values, predictions)
         logger.info(f'General metrics stat: {metrics}')
+        evraz = evraz_metric(y_train, predictions)
+        logger.info(f'Evraz metrics: {evraz}')
         logger.info(f'Finished in {datetime.now() - start} s')
 
     except Exception as e:

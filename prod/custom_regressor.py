@@ -17,7 +17,7 @@ class CustomCatBoostRegressor(CatBoostRegressor):
 
         return super().fit(
             x,
-            y= np.log(y),
+            y = np.log(y),
             cat_features=x.filter(regex=f"^{CAT_PREFIX}").columns.to_list(),
             **kwargs
         )

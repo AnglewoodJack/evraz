@@ -1,9 +1,9 @@
 # Целевые переменные
 TARGET = ['TST', 'C']
 # Категориальные признаки, для которых применяется smoothed target encoding.
-CATEGORICAL_STE_FEATURES = ['plavka_ST_FURM']
+CATEGORICAL_STE_FEATURES = []
 # Категориальные признаки, для которых применяется one-hot-encoding.
-CATEGORICAL_OHE_FEATURES = []
+CATEGORICAL_OHE_FEATURES = ['plavka_TIPE_FUR']
 # Численные признаки.
 NUM_FEATURES = ['O2', 'N2','T', 'H2', 'CO2', 'CO', 'AR']
 # Суффикс для обозначения категориальных переменных.

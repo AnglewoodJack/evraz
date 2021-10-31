@@ -47,8 +47,8 @@ def pipeline_mapper(numerical: List[str], ohe_categorical: List[str],
             }
         ]
     )
-    gen_cat_ohe = [(col_name, transformer, {"alias": prefix + col_name[0]}) for
-                   (col_name, transformer, _) in gen_cat_ohe]
+    #gen_cat_ohe = [(col_name, transformer, {"alias": prefix + col_name[0]}) for
+    #               (col_name, transformer, _) in gen_cat_ohe]
     # Трансформер для категориальных признаков с STE (первая целевая переменная).
     gen_ste_tar_1 = gen_features(
         columns=category_ste_features,
@@ -63,7 +63,7 @@ def pipeline_mapper(numerical: List[str], ohe_categorical: List[str],
             }
         ]
     )
-    gen_ste_tar_1 = [(col_name, transformer, {"alias": prefix + targets[0] + '_'  + col_name[0]}) for
+    gen_ste_tar_1 = [(col_name, transformer, {"alias":targets[0] + '_'  + col_name[0]}) for
                      (col_name, transformer, _) in gen_ste_tar_1]
     # Трансформер для категориальных признаков с STE (вторая целевая переменная).
     gen_ste_tar_2 = gen_features(
@@ -79,7 +79,7 @@ def pipeline_mapper(numerical: List[str], ohe_categorical: List[str],
             }
         ]
     )
-    gen_ste_tar_2 = [(col_name, transformer, {"alias": prefix + targets[1] + '_' + col_name[0]}) for
+    gen_ste_tar_2 = [(col_name, transformer, {"alias": targets[1] + '_' + col_name[0]}) for
                        (col_name, transformer, _) in gen_ste_tar_2]
 
     # Определение пайплайна через mapper.
