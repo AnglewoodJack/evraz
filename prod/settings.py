@@ -17,6 +17,7 @@ MODEL_PARAMS = dict(
     random_seed=42,
     verbose=0
         )
+TARGET_LOG = True
 # Параметры логирования.
 LOGGING_CONFIG = {
     "version": 1,

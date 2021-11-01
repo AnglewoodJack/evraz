@@ -3,7 +3,7 @@ import pandas as pd
 from typing import Union
 from catboost import CatBoostRegressor
 from sklearn.feature_selection import SelectFromModel
-from prod.settings import CAT_PREFIX
+from prod.settings import CAT_PREFIX, TARGET_LOG
 
 
 class CustomCatBoostRegressor(CatBoostRegressor):
@@ -17,7 +17,7 @@ class CustomCatBoostRegressor(CatBoostRegressor):
 
         return super().fit(
             x,
-            y = np.log(y),
+            y = np.log(y) if TARGET_LOG else y,
             cat_features=x.filter(regex=f"^{CAT_PREFIX}").columns.to_list(),
             **kwargs
         )

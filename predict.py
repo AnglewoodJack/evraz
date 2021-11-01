@@ -4,7 +4,9 @@ import numpy as np
 import logging.config
 from traceback import format_exc
 from prod.model import PredictionModel
-from prod.settings import LOGGING_CONFIG, NUM_FEATURES, CATEGORICAL_OHE_FEATURES, CATEGORICAL_STE_FEATURES, TARGET
+from prod.settings import (LOGGING_CONFIG, NUM_FEATURES,
+                           CATEGORICAL_OHE_FEATURES, CATEGORICAL_STE_FEATURES,
+                           TARGET, TARGET_LOG)
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
@@ -46,7 +48,7 @@ if __name__ == "__main__":
         # Сохранение результатов.
         logger.info('Save results')
         target_df = pd.DataFrame(data=target, columns=TARGET)
-        pd.concat([test_df['NPLV'], np.exp(target_df)], axis=1).to_csv(args['o'], index=False)
+        pd.concat([test_df['NPLV'], np.exp(target_df) if TARGET_LOG else target_df], axis=1).to_csv(args['o'], index=False)
 
     except Exception as e:
         err = format_exc()
